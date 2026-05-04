@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuesioner FAHP – Prioritas Fitur Konten TikTok FYP</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0f;
+    --white: #f5f4f0;
+    --accent: #6ee7b7;
+    --accent2: #818cf8;
+    --muted: #3a3a4a;
+    --card: #13131f;
+    --border: #2a2a3a;
+    --danger: #f87171;
+    --warn: #fbbf24;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  /* ── LANDING ── */
+  #page-landing {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 2rem; text-align: center;
+  }
+  .brand-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 3px; color: var(--accent);
+    text-transform: uppercase; margin-bottom: 1.5rem;
+    border: 1px solid var(--accent); padding: 4px 12px; border-radius: 20px;
+  }
+  #page-landing h1 { font-size: clamp(1.6rem, 4vw, 2.8rem); font-weight: 700; line-height: 1.2; margin-bottom: 1rem; }
+  #page-landing h1 span { color: var(--accent); }
+  #page-landing p { color: #888; font-size: 0.95rem; max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.7; }
+
+  .btn {
+    display: inline-block; padding: 14px 36px; border-radius: 8px; font-family: 'Sora'; font-size: 0.95rem;
+    font-weight: 600; cursor: pointer; border: none; transition: all .2s; text-decoration: none;
+  }
+  .btn-primary { background: var(--accent); color: #0a0a0f; }
+  .btn-primary:hover { background: #34d399; transform: translateY(-1px); }
+  .btn-secondary { background: transparent; color: var(--white); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-ghost { background: transparent; color: #888; border: 1px solid var(--border); font-size: 0.82rem; padding: 8px 18px; }
+  .btn-ghost:hover { color: var(--white); border-color: var(--muted); }
+
+  .landing-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+  /* ── FORM: RESPONDENT ID ── */
+  #page-id {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 2rem;
+  }
+  .form-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 440px;
+  }
+  .form-card h2 { font-size: 1.3rem; margin-bottom: 0.4rem; }
+  .form-card p { font-size: 0.85rem; color: #777; margin-bottom: 2rem; line-height: 1.6; }
+  label { display: block; font-size: 0.82rem; color: #aaa; margin-bottom: 6px; letter-spacing: 0.5px; }
+  input[type="text"], input[type="password"], select {
+    width: 100%; padding: 12px 14px; background: #1a1a2e; border: 1px solid var(--border);
+    border-radius: 8px; color: var(--white); font-family: 'Sora'; font-size: 0.9rem;
+    margin-bottom: 1.2rem; outline: none; transition: border .2s;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  .err-msg { color: var(--danger); font-size: 0.82rem; margin-top: -0.8rem; margin-bottom: 1rem; display: none; }
+
+  /* ── QUESTIONNAIRE ── */
+  #page-questionnaire { display: none; padding: 2rem 1rem; max-width: 860px; margin: 0 auto; }
+  .q-header { margin-bottom: 2.5rem; }
+  .q-header h2 { font-size: 1.4rem; margin-bottom: 0.3rem; }
+  .q-header p { color: #777; font-size: 0.85rem; }
+  .progress-bar-wrap { background: var(--muted); border-radius: 99px; height: 4px; margin-top: 1rem; }
+  .progress-bar { background: var(--accent); height: 4px; border-radius: 99px; transition: width .4s; }
+
+  .question-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 2rem; margin-bottom: 1.5rem; display: none;
+  }
+  .question-card.active { display: block; animation: fadeUp .3s ease; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+
+  .q-number { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 2px; margin-bottom: 0.6rem; }
+  .q-instruction { font-size: 0.9rem; color: #999; margin-bottom: 1.5rem; line-height: 1.6; }
+  .q-instruction strong { color: var(--white); }
+
+  .scale-row {
+    display: flex; align-items: center; justify-content: center; gap: 0;
+    flex-wrap: nowrap; overflow-x: auto; padding: 1rem 0;
+  }
+  .criterion-label {
+    min-width: 110px; max-width: 130px; text-align: center;
+    font-size: 0.82rem; font-weight: 600; padding: 0 8px; line-height: 1.4;
+    flex-shrink: 0;
+  }
+  .criterion-label.left { color: var(--accent); text-align: right; }
+  .criterion-label.right { color: var(--accent2); text-align: left; }
+
+  .scale-buttons { display: flex; gap: 4px; align-items: center; }
+  .scale-btn {
+    width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--border);
+    background: transparent; color: #888; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem; cursor: pointer; transition: all .15s; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .scale-btn:hover { border-color: #888; color: var(--white); }
+  .scale-btn[data-side="left"].selected { background: var(--accent); border-color: var(--accent); color: #0a0a0f; }
+  .scale-btn[data-side="right"].selected { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+  .scale-btn[data-val="1"].selected { background: #4ade80; border-color: #4ade80; color: #0a0a0f; }
+
+  .center-marker { width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+
+  .scale-legend {
+    display: flex; justify-content: space-between; font-size: 0.72rem; color: #555;
+    margin-top: 0.5rem; font-family: 'JetBrains Mono', monospace;
+  }
+
+  .nav-btns { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end; }
+  .selection-feedback { text-align: center; min-height: 22px; font-size: 0.82rem; color: #666; margin-top: 0.5rem; }
+  .selection-feedback.set { color: var(--accent); }
+
+  /* ── THANK YOU ── */
+  #page-thankyou { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 2rem; }
+  #page-thankyou .checkmark { font-size: 4rem; margin-bottom: 1rem; }
+  #page-thankyou h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  #page-thankyou p { color: #777; max-width: 400px; font-size: 0.9rem; line-height: 1.7; }
+
+  /* ── ADMIN ── */
+  #page-admin-login { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+  #page-admin { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; }
+  .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: gap; }
+  .admin-header h2 { font-size: 1.4rem; }
+  .stats-row { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; flex: 1; min-width: 140px; }
+  .stat-card .val { font-size: 2rem; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+  .stat-card .lbl { font-size: 0.78rem; color: #666; margin-top: 2px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  th { background: #1a1a2e; color: #aaa; font-weight: 600; padding: 10px 12px; text-align: left; font-size: 0.78rem; letter-spacing: 0.5px; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: #ccc; }
+  tr:hover td { background: #16162a; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; }
+  .badge-green { background: #052e16; color: var(--accent); border: 1px solid #065f46; }
+  .badge-orange { background: #1c1007; color: var(--warn); border: 1px solid #92400e; }
+
+  .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 2rem; overflow-x: auto; }
+  .section-title { font-size: 0.78rem; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; font-family: 'JetBrains Mono', monospace; }
+
+  .export-row { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+
+  /* ── UTILITY ── */
+  .hidden { display: none !important; }
+  .text-center { text-align: center; }
+  .mt1 { margin-top: 1rem; }
+  .mt2 { margin-top: 2rem; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ LANDING ═══════════════════════════════════ -->
+<div id="page-landing">
+  <div class="brand-tag">Penelitian FAHP · UNS 2026</div>
+  <h1>Kuesioner Prioritas<br>Fitur Konten <span>TikTok FYP</span></h1>
+  <p>Bantu kami menentukan fitur konten mana yang paling berpengaruh terhadap peluang video masuk halaman For You Page TikTok. Kuesioner ini membutuhkan ±5 menit.</p>
+  <div class="landing-btns">
+    <button class="btn btn-primary" onclick="showPage('page-id')">Mulai Kuesioner</button>
+    <button class="btn btn-secondary" onclick="showPage('page-admin-login')">Login Admin</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ RESPONDENT ID ═══════════════════════════════════ -->
+<div id="page-id">
+  <div class="form-card">
+    <h2>Identitas Responden</h2>
+    <p>Data identitas hanya digunakan untuk keperluan administrasi penelitian. Jawaban Anda bersifat rahasia dan tidak akan dibagikan ke responden lain.</p>
+    <label>Nama Lengkap</label>
+    <input type="text" id="resp-name" placeholder="Nama Anda...">
+    <label>Profesi / Keahlian</label>
+    <select id="resp-role">
+      <option value="">-- Pilih --</option>
+      <option value="Content Creator">Content Creator TikTok</option>
+      <option value="Social Media Specialist">Social Media Specialist</option>
+      <option value="Akademisi / Peneliti">Akademisi / Peneliti</option>
+      <option value="Pengamat Media Sosial">Pengamat Media Sosial</option>
+      <option value="Digital Marketer">Digital Marketer</option>
+      <option value="Lainnya">Lainnya</option>
+    </select>
+    <label>Pengalaman di bidang konten digital</label>
+    <select id="resp-exp">
+      <option value="">-- Pilih --</option>
+      <option value="< 1 tahun">Kurang dari 1 tahun</option>
+      <option value="1-2 tahun">1–2 tahun</option>
+      <option value="3-5 tahun">3–5 tahun</option>
+      <option value="> 5 tahun">Lebih dari 5 tahun</option>
+    </select>
+    <div class="err-msg" id="id-err">Mohon lengkapi semua data.</div>
+    <button class="btn btn-primary" style="width:100%" onclick="startQuestionnaire()">Lanjutkan →</button>
+    <div style="margin-top:1rem; text-align:center">
+      <button class="btn btn-ghost" onclick="showPage('page-landing')">← Kembali</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ QUESTIONNAIRE ═══════════════════════════════════ -->
+<div id="page-questionnaire">
+  <div class="q-header">
+    <p class="section-title">Kuesioner Perbandingan Berpasangan FAHP</p>
+    <h2>Perbandingan Antar Fitur Konten</h2>
+    <p>Untuk setiap pasang fitur, tentukan <strong>mana yang lebih penting</strong> dan <strong>seberapa besar</strong> perbedaannya menggunakan skala 1–9.</p>
+    <div class="progress-bar-wrap mt1">
+      <div class="progress-bar" id="progress-bar" style="width:10%"></div>
+    </div>
+  </div>
+
+  <div id="questions-container"></div>
+
+  <div class="nav-btns">
+    <button class="btn btn-ghost" id="btn-prev" onclick="prevQuestion()">← Sebelumnya</button>
+    <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Selanjutnya →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ THANK YOU ═══════════════════════════════════ -->
+<div id="page-thankyou">
+  <div class="checkmark">✅</div>
+  <h2>Terima Kasih!</h2>
+  <p>Jawaban Anda telah berhasil disimpan. Data Anda akan digunakan dalam analisis penelitian FAHP mengenai prioritas fitur konten TikTok FYP.</p>
+  <p style="margin-top:1rem; color:#555; font-size:0.8rem;">Anda boleh menutup halaman ini.</p>
+</div>
+
+<!-- ═══════════════════════════════════ ADMIN LOGIN ═══════════════════════════════════ -->
+<div id="page-admin-login">
+  <div class="form-card">
+    <h2>Admin Login</h2>
+    <p>Halaman ini hanya untuk peneliti. Masukkan password untuk melihat hasil kuesioner.</p>
+    <label>Password Admin</label>
+    <input type="password" id="admin-pw" placeholder="Password..." onkeydown="if(event.key==='Enter')adminLogin()">
+    <div class="err-msg" id="admin-err">Password salah.</div>
+    <button class="btn btn-primary" style="width:100%" onclick="adminLogin()">Masuk</button>
+    <div style="margin-top:1rem;text-align:center">
+      <button class="btn btn-ghost" onclick="showPage('page-landing')">← Kembali</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ ADMIN PANEL ═══════════════════════════════════ -->
+<div id="page-admin">
+  <div class="admin-header">
+    <div>
+      <p class="section-title">Panel Admin – Hanya Peneliti</p>
+      <h2>Hasil Kuesioner FAHP</h2>
+    </div>
+    <button class="btn btn-ghost" onclick="showPage('page-landing')">← Keluar</button>
+  </div>
+
+  <div class="stats-row" id="admin-stats"></div>
+
+  <div class="export-row">
+    <button class="btn btn-primary" onclick="exportCSV()">⬇ Unduh CSV (Excel)</button>
+    <button class="btn btn-secondary" onclick="exportJSON()">⬇ Unduh JSON</button>
+    <button class="btn btn-danger" onclick="clearAllData()">🗑 Hapus Semua Data</button>
+  </div>
+
+  <p class="section-title">Daftar Responden</p>
+  <div class="table-wrap">
+    <table id="admin-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Nama</th><th>Profesi</th><th>Pengalaman</th><th>Waktu Isi</th><th>Status</th><th>Detail</th>
+        </tr>
+      </thead>
+      <tbody id="admin-tbody"></tbody>
+    </table>
+  </div>
+
+  <p class="section-title">Matriks Jawaban per Responden</p>
+  <div id="admin-matrices"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+const ADMIN_PASSWORD = "natasya2026"; // GANTI PASSWORD INI
+
+const CRITERIA = [
+  { id: "hashtag", label: "Hashtag Populer" },
+  { id: "musik",   label: "Musik Populer" },
+  { id: "caption", label: "Panjang Caption" },
+  { id: "durasi",  label: "Durasi Video" },
+  { id: "waktu",   label: "Waktu Unggah" },
+];
+
+// Generate all 10 pairs
+const PAIRS = [];
+for (let i = 0; i < CRITERIA.length; i++)
+  for (let j = i+1; j < CRITERIA.length; j++)
+    PAIRS.push([i, j]);
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let currentPage = 'page-landing';
+let currentQ = 0;
+let answers = {}; // key: "i_j" → { side: 'left'|'right'|'equal', val: 1-9 }
+let respondent = {};
+
+// ═══════════════════════════════════════════════════════
+//  PAGE NAV
+// ═══════════════════════════════════════════════════════
+function showPage(id) {
+  document.getElementById(currentPage).style.display = 'none';
+  currentPage = id;
+  const el = document.getElementById(id);
+  el.style.display = ['page-landing','page-thankyou','page-admin-login','page-admin'].includes(id) ? 'flex' : (id === 'page-admin' ? 'block' : 'flex');
+  if (id === 'page-questionnaire') el.style.display = 'block';
+  if (id === 'page-admin') { el.style.display = 'block'; renderAdmin(); }
+}
+
+// ═══════════════════════════════════════════════════════
+//  QUESTIONNAIRE BUILD
+// ═══════════════════════════════════════════════════════
+function buildQuestions() {
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  PAIRS.forEach(([i, j], idx) => {
+    const cA = CRITERIA[i];
+    const cB = CRITERIA[j];
+    const key = `${i}_${j}`;
+    const div = document.createElement('div');
+    div.className = 'question-card' + (idx === 0 ? ' active' : '');
+    div.id = `q_${idx}`;
+    div.innerHTML = `
+      <div class="q-number">PERTANYAAN ${idx+1} DARI ${PAIRS.length}</div>
+      <div class="q-instruction">
+        Menurut Anda, antara <strong>${cA.label}</strong> dan <strong>${cB.label}</strong>,
+        fitur mana yang lebih berpengaruh terhadap peluang video masuk FYP TikTok?
+        Klik pada salah satu sisi, lalu pilih skor kepentingannya.
+      </div>
+      <div class="scale-row">
+        <div class="criterion-label left">${cA.label}</div>
+        <div class="scale-buttons" id="btns_${key}">
+          ${[9,7,5,3].map(v=>`<button class="scale-btn" data-key="${key}" data-side="left" data-val="${v}" onclick="selectBtn(this)">${v}</button>`).join('')}
+          <div class="center-marker">
+            <button class="scale-btn" data-key="${key}" data-side="equal" data-val="1" onclick="selectBtn(this)" style="width:44px;height:44px;border-color:#4ade80;font-size:0.7rem">sama</button>
+          </div>
+          ${[3,5,7,9].map(v=>`<button class="scale-btn" data-key="${key}" data-side="right" data-val="${v}" onclick="selectBtn(this)">${v}</button>`).join('')}
+        </div>
+        <div class="criterion-label right">${cB.label}</div>
+      </div>
+      <div class="scale-legend">
+        <span>← Sangat Penting (9)</span>
+        <span>Sama Penting (1)</span>
+        <span>Sangat Penting (9) →</span>
+      </div>
+      <div class="selection-feedback" id="fb_${key}">Belum dipilih</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function selectBtn(btn) {
+  const key = btn.dataset.key;
+  const side = btn.dataset.side;
+  const val = parseInt(btn.dataset.val);
+  // deselect all in this group
+  document.querySelectorAll(`[data-key="${key}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[key] = { side, val };
+  const [i, j] = key.split('_').map(Number);
+  const fb = document.getElementById(`fb_${key}`);
+  if (side === 'equal') {
+    fb.textContent = `Sama penting (1:1)`;
+  } else {
+    const dominant = side === 'left' ? CRITERIA[i].label : CRITERIA[j].label;
+    fb.textContent = `${dominant} lebih penting — skala ${val}`;
+  }
+  fb.className = 'selection-feedback set';
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+function updateNav() {
+  document.getElementById('btn-prev').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').textContent = currentQ === PAIRS.length - 1 ? 'Selesai ✓' : 'Selanjutnya →';
+  document.getElementById('progress-bar').style.width = `${((currentQ+1)/PAIRS.length)*100}%`;
+}
+
+function prevQuestion() {
+  if (currentQ > 0) { document.getElementById(`q_${currentQ}`).classList.remove('active'); currentQ--; document.getElementById(`q_${currentQ}`).classList.add('active'); updateNav(); }
+}
+
+function nextQuestion() {
+  const [i,j] = PAIRS[currentQ];
+  const key = `${i}_${j}`;
+  if (!answers[key]) { alert('Mohon pilih jawaban terlebih dahulu.'); return; }
+  if (currentQ < PAIRS.length - 1) {
+    document.getElementById(`q_${currentQ}`).classList.remove('active'); currentQ++;
+    document.getElementById(`q_${currentQ}`).classList.add('active'); updateNav();
+  } else { submitAnswers(); }
+}
+
+// ═══════════════════════════════════════════════════════
+//  IDENTITY & START
+// ═══════════════════════════════════════════════════════
+function startQuestionnaire() {
+  const name = document.getElementById('resp-name').value.trim();
+  const role = document.getElementById('resp-role').value;
+  const exp  = document.getElementById('resp-exp').value;
+  if (!name || !role || !exp) { document.getElementById('id-err').style.display='block'; return; }
+  document.getElementById('id-err').style.display='none';
+  respondent = { name, role, exp };
+  answers = {}; currentQ = 0;
+  buildQuestions(); updateNav();
+  showPage('page-questionnaire');
+}
+
+// ═══════════════════════════════════════════════════════
+//  SUBMIT → localStorage
+// ═══════════════════════════════════════════════════════
+function submitAnswers() {
+  const record = {
+    id: Date.now(),
+    timestamp: new Date().toLocaleString('id-ID'),
+    respondent,
+    answers,
+    matrix: buildRawMatrix()
+  };
+  const existing = JSON.parse(localStorage.getItem('fahp_responses') || '[]');
+  existing.push(record);
+  localStorage.setItem('fahp_responses', JSON.stringify(existing));
+  showPage('page-thankyou');
+}
+
+// Build n×n matrix from answers
+function buildRawMatrix() {
+  const n = CRITERIA.length;
+  const mat = Array.from({length:n}, ()=>Array(n).fill(1));
+  PAIRS.forEach(([i,j]) => {
+    const key = `${i}_${j}`;
+    const ans = answers[key];
+    if (!ans) return;
+    let val;
+    if (ans.side === 'equal') { val = 1; }
+    else if (ans.side === 'left') { val = ans.val; }
+    else { val = 1/ans.val; }
+    mat[i][j] = val;
+    mat[j][i] = 1/val;
+  });
+  return mat;
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADMIN
+// ═══════════════════════════════════════════════════════
+function adminLogin() {
+  const pw = document.getElementById('admin-pw').value;
+  if (pw === ADMIN_PASSWORD) { document.getElementById('admin-err').style.display='none'; showPage('page-admin'); }
+  else { document.getElementById('admin-err').style.display='block'; }
+}
+
+function getResponses() { return JSON.parse(localStorage.getItem('fahp_responses') || '[]'); }
+
+function renderAdmin() {
+  const data = getResponses();
+  // Stats
+  document.getElementById('admin-stats').innerHTML = `
+    <div class="stat-card"><div class="val">${data.length}</div><div class="lbl">Total Responden</div></div>
+    <div class="stat-card"><div class="val">${data.length >= 3 ? '✓' : data.length + '/3'}</div><div class="lbl">Target Responden</div></div>
+    <div class="stat-card"><div class="val">${CRITERIA.length}</div><div class="lbl">Jumlah Kriteria</div></div>
+    <div class="stat-card"><div class="val">${PAIRS.length}</div><div class="lbl">Pasang Perbandingan</div></div>
+  `;
+  // Table
+  const tbody = document.getElementById('admin-tbody');
+  if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="color:#555;text-align:center;padding:2rem">Belum ada responden</td></tr>'; }
+  else {
+    tbody.innerHTML = data.map((r,idx)=>`
+      <tr>
+        <td>${idx+1}</td>
+        <td>${r.respondent.name}</td>
+        <td>${r.respondent.role}</td>
+        <td>${r.respondent.exp}</td>
+        <td>${r.timestamp}</td>
+        <td><span class="badge badge-green">Selesai</span></td>
+        <td><button class="btn btn-ghost" onclick="scrollToMatrix(${idx})">Lihat Matriks</button></td>
+      </tr>
+    `).join('');
+  }
+  // Matrices
+  const mDiv = document.getElementById('admin-matrices');
+  if (data.length === 0) { mDiv.innerHTML = '<p style="color:#555">Belum ada data.</p>'; return; }
+  mDiv.innerHTML = data.map((r,idx) => {
+    const mat = r.matrix;
+    const header = `<th></th>` + CRITERIA.map(c=>`<th>${c.label}</th>`).join('');
+    const rows = mat.map((row, i) =>
+      `<tr><td style="color:var(--accent);font-weight:600">${CRITERIA[i].label}</td>` +
+      row.map(v => `<td>${typeof v === 'number' ? (Number.isInteger(v) ? v : v.toFixed(3)) : v}</td>`).join('') + `</tr>`
+    ).join('');
+    return `
+      <div id="matrix_${idx}" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem">
+        <p class="section-title">${r.respondent.name} · ${r.respondent.role} · ${r.timestamp}</p>
+        <div style="overflow-x:auto"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>
+      </div>`;
+  }).join('');
+}
+
+function scrollToMatrix(idx) { document.getElementById(`matrix_${idx}`).scrollIntoView({behavior:'smooth'}); }
+
+function clearAllData() {
+  if (confirm('Hapus semua data responden? Tindakan ini tidak dapat dibatalkan.')) {
+    localStorage.removeItem('fahp_responses'); renderAdmin();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  EXPORT
+// ═══════════════════════════════════════════════════════
+function exportCSV() {
+  const data = getResponses();
+  if (!data.length) { alert('Belum ada data.'); return; }
+  const n = CRITERIA.length;
+  // Header
+  let rows = [];
+  const matCols = [];
+  for (let i=0;i<n;i++) for (let j=0;j<n;j++) matCols.push(`${CRITERIA[i].label}_vs_${CRITERIA[j].label}`);
+  rows.push(['ID','Timestamp','Nama','Profesi','Pengalaman', ...matCols].join(','));
+
+  // Raw answer cols
+  const pairCols = PAIRS.map(([i,j])=>`RAW_${CRITERIA[i].id}_vs_${CRITERIA[j].id}`);
+  rows[0] += ',' + pairCols.join(',');
+
+  data.forEach((r,idx) => {
+    const mat = r.matrix;
+    const matVals = [];
+    for (let i=0;i<n;i++) for (let j=0;j<n;j++) matVals.push(mat[i][j]);
+    const rawVals = PAIRS.map(([i,j]) => {
+      const key=`${i}_${j}`, ans=r.answers[key];
+      if(!ans) return '';
+      if(ans.side==='equal') return '1';
+      return ans.side==='left' ? ans.val : `1/${ans.val}`;
+    });
+    rows.push([idx+1, `"${r.timestamp}"`, `"${r.respondent.name}"`, `"${r.respondent.role}"`, `"${r.respondent.exp}"`, ...matVals, ...rawVals].join(','));
+  });
+
+  const blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `FAHP_Kuesioner_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function exportJSON() {
+  const data = getResponses();
+  if (!data.length) { alert('Belum ada data.'); return; }
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `FAHP_Kuesioner_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT SIMULATION (3 RESPONDENTS)
+// ═══════════════════════════════════════════════════════
+function loadSimulatedData() {
+  // Only load if storage is empty
+  if (localStorage.getItem('fahp_responses')) return;
+
+  const sim = [
+    {
+      respondent: { name: "Budi Santoso", role: "Content Creator", exp: "3-5 tahun" },
+      answers: {
+        "0_1":{side:"left",val:3},   // hashtag vs musik → hashtag sedikit lebih penting
+        "0_2":{side:"left",val:5},   // hashtag vs caption → hashtag lebih penting
+        "0_3":{side:"left",val:3},   // hashtag vs durasi
+        "0_4":{side:"left",val:5},   // hashtag vs waktu
+        "1_2":{side:"left",val:3},   // musik vs caption
+        "1_3":{side:"equal",val:1},  // musik vs durasi → sama
+        "1_4":{side:"left",val:3},   // musik vs waktu
+        "2_3":{side:"right",val:3},  // caption vs durasi → durasi lebih penting
+        "2_4":{side:"equal",val:1},  // caption vs waktu
+        "3_4":{side:"left",val:3},   // durasi vs waktu
+      }
+    },
+    {
+      respondent: { name: "Sari Dewi", role: "Social Media Specialist", exp: "> 5 tahun" },
+      answers: {
+        "0_1":{side:"left",val:5},
+        "0_2":{side:"left",val:7},
+        "0_3":{side:"left",val:5},
+        "0_4":{side:"left",val:7},
+        "1_2":{side:"left",val:5},
+        "1_3":{side:"left",val:3},
+        "1_4":{side:"left",val:5},
+        "2_3":{side:"right",val:5},
+        "2_4":{side:"right",val:3},
+        "3_4":{side:"left",val:5},
+      }
+    },
+    {
+      respondent: { name: "Ahmad Fauzi", role: "Akademisi / Peneliti", exp: "3-5 tahun" },
+      answers: {
+        "0_1":{side:"left",val:3},
+        "0_2":{side:"left",val:5},
+        "0_3":{side:"right",val:3},
+        "0_4":{side:"left",val:5},
+        "1_2":{side:"left",val:3},
+        "1_3":{side:"right",val:3},
+        "1_4":{side:"left",val:3},
+        "2_3":{side:"right",val:5},
+        "2_4":{side:"right",val:3},
+        "3_4":{side:"left",val:3},
+      }
+    }
+  ];
+
+  const records = sim.map((s,idx)=>{
+    // temporarily set answers to build matrix
+    const savedAnswers = s.answers;
+    // build matrix inline
+    const n = CRITERIA.length;
+    const mat = Array.from({length:n},()=>Array(n).fill(1));
+    PAIRS.forEach(([i,j])=>{
+      const key=`${i}_${j}`, ans=savedAnswers[key];
+      if(!ans) return;
+      let val = ans.side==='equal'?1:ans.side==='left'?ans.val:1/ans.val;
+      mat[i][j]=val; mat[j][i]=1/val;
+    });
+    return {
+      id: Date.now()+idx,
+      timestamp: new Date(Date.now()-idx*86400000).toLocaleString('id-ID'),
+      respondent: s.respondent,
+      answers: s.answers,
+      matrix: mat
+    };
+  });
+  localStorage.setItem('fahp_responses', JSON.stringify(records));
+}
+
+// Load simulated data on init
+loadSimulatedData();
+
+// Fix initial page display
+document.getElementById('page-id').style.display='none';
+document.getElementById('page-questionnaire').style.display='none';
+document.getElementById('page-thankyou').style.display='none';
+document.getElementById('page-admin-login').style.display='none';
+document.getElementById('page-admin').style.display='none';
+document.getElementById('page-landing').style.display='flex';
+</script>
+</body>
+</html>
