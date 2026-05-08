@@ -428,7 +428,12 @@ function startQuestionnaire() {
 // ═══════════════════════════════════════════════════════
 //  SUBMIT → localStorage
 // ═══════════════════════════════════════════════════════
-function submitAnswers() {
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGCXbT-BYhcsoCcAMwwWawczR54MmQyxbzWoavEj6xakVSa3vrHZLJpalYywbG9jc92g/exec"; // ← URL kamu
+
+async function submitAnswers() {
+  document.getElementById('btn-next').textContent = 'Menyimpan...';
+  document.getElementById('btn-next').disabled = true;
+
   const record = {
     id: Date.now(),
     timestamp: new Date().toLocaleString('id-ID'),
@@ -436,10 +441,20 @@ function submitAnswers() {
     answers,
     matrix: buildRawMatrix()
   };
-  const existing = JSON.parse(localStorage.getItem('fahp_responses') || '[]');
-  existing.push(record);
-  localStorage.setItem('fahp_responses', JSON.stringify(existing));
-  showPage('page-thankyou');
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(record)
+    });
+    showPage('page-thankyou');
+  } catch(e) {
+    alert("Gagal menyimpan. Periksa koneksi internet lalu coba lagi.");
+    document.getElementById('btn-next').textContent = 'Selesai ✓';
+    document.getElementById('btn-next').disabled = false;
+  }
 }
 
 // Build n×n matrix from answers
